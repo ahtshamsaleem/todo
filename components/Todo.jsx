@@ -8,19 +8,19 @@ import { IoMdCheckboxOutline } from "react-icons/io";
 
 const Todo = ({todo, deleteTodo, editTodo, toggleComplete}) => {
   return (
-    <div className="text-white flex justify-between items-center mb-4 p-4">
-        <div>
-        <h3>{todo.title}</h3>
+    <div className="text-white flex justify-between items-center mb-4 p-4 bg-slate-800 rounded-xl ">
+        <div className="p-2 w-[80%]">
+        <h3 className="text-lg font-semibold ">{todo.title}</h3>
         <p >{todo.description}</p>
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center gap-2 scale-125 p-4">
         {/* <img className="edit-icon" src={FaRegPenToSquare} onClick={() => editTodo(task.id)} />
         <img className="delete-icon" src={FaRegTrashAlt} onClick={() => deleteTodo(task.id)} />
         <img className="" src={IoMdCheckboxOutline} /> */}
 
         <FaRegPenToSquare />
         <FaRegTrashAlt />
-        <IoMdCheckboxOutline />
+        <IoMdCheckboxOutline className="text-green-500"/>
 
         </div>
     </div>

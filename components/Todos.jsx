@@ -3,22 +3,17 @@ import { useEffect, useState } from "react";
 import Todo from "./Todo";
 import AddTodo from "./AddTodo";
 import axios from "axios";
+import { HashLoader } from "react-spinners";
 
-const todoList = [{
-    title: 'Assignment 1',
-    description: 'I have to complete biology assignment before 9pm I have to complete biology assignment before 9pm I have to complete biology assignment before 9pm'
-}, {
-    title: 'Assignment 2',
-    description: 'I have to complete biology assignment before 9pm'
-}, {
-    title: 'Assignment 3',
-    description: 'I have to complete biology assignment before 9pm',
-    isCompleted: false
-}]
+
 
 
 const Todos = () => {
 
+
+
+
+    const [isFetching, setIsFetching] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('')
         
@@ -35,13 +30,13 @@ const Todos = () => {
 
     useEffect(() => {
         const getAllTodos = async () => {
-            setIsLoading(true);
+            setIsFetching(true);
             setError('');
             try {
                 const {data} = await axios.get('/api/todo');
                 if (data.status === 200) {
-                    setIsLoading(false);
                     
+                    setIsFetching(false);
                     setTodos(data.data);
                 } else {
                     
@@ -73,10 +68,11 @@ const Todos = () => {
 
     const onSubmitHandler = async (event) => {
         event.preventDefault();
-        
+        setIsLoading(true);
         try {
             const {data} = await axios.post('/api/todo', todo);
             if (data.status === 201) {
+                setIsLoading(false);
                 setTodos((prev) => {
                     const newTodos = [...prev];
                     newTodos.unshift(todo)
@@ -92,17 +88,39 @@ const Todos = () => {
 
 
 
+
+
+
+
+
+
+    const deleteTodoHandler = async (id) => {
+        try {
+            const {data} = await axios.delete(`api/todo${id}`);
+            console.log(data)
+        } catch(error) {
+            console.log('error occured in dlete handelr')
+        }
+
+    }
+
+
         return (
             <div className="w-[60%] p-16 flex flex-col justify-center items-center ">
             <h2 className="text-center">The Todo App</h2>
-            <AddTodo title={todo.title} description={todo.description} onChangeHandler={onChangeHandler} onSubmitHandler={onSubmitHandler}/>
-                <div className="w-full mt-8  ">
+            <AddTodo isLoading={isLoading} title={todo.title} description={todo.description} onChangeHandler={onChangeHandler} onSubmitHandler={onSubmitHandler}/>
+
+            {isFetching ? <HashLoader color="#36d7b7" className="mt-12"/> : 
+            <div className="w-full mt-8  ">
                 {
                     todos.map((el) => {
-                        return <Todo key={el.title} todo={el}/>
+                        return <Todo key={el.id} todo={el} deleteTodo={deleteTodoHandler}/>
                     })
                 }
-                </div>
+                </div>}
+            
+            
+            
             </div>
         )
 

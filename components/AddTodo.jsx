@@ -1,6 +1,7 @@
+import { PropagateLoader } from "react-spinners"
 
 
-const AddTodo = ({title, description, onChangeHandler, onSubmitHandler}) => {
+const AddTodo = ({isLoading, title, description, onChangeHandler, onSubmitHandler}) => {
 
 
 
@@ -22,7 +23,7 @@ const AddTodo = ({title, description, onChangeHandler, onSubmitHandler}) => {
             <input type="text" onChange={onChangeHandler} value={description} name='description' className="w-full text-sm font-sans font-normal leading-5 px-3 py-3 rounded-md focus:shadow-outline-purple focus:shadow-lg hover:border-blue-500 focus:border-blue-500 bg-white text-slate-900 outline-none border border-solid"/>
             </div>
 
-            <button type='submit' className="mt-6 w-full px-4 py-3 text-white text-lg font-semibold bg-black rounded-lg  ">Add Todo</button>
+            <button type='submit' className="mt-6 w-full px-4 py-3 text-white text-lg font-semibold bg-black rounded-lg ">{isLoading ? <PropagateLoader color="white" className="mb-4"/> : 'Add Todo'}</button>
         </form>
     </div>
   )

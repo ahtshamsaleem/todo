@@ -19,7 +19,7 @@ const Todo = ({todo, deleteTodo, editTodo, toggleComplete}) => {
         <img className="" src={IoMdCheckboxOutline} /> */}
 
         <FaRegPenToSquare />
-        <FaRegTrashAlt />
+        <FaRegTrashAlt onClick={() => deleteTodo(todo.id)}/>
         <IoMdCheckboxOutline className="text-green-500"/>
 
         </div>

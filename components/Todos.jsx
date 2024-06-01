@@ -241,11 +241,7 @@ const Todos = () => {
 
 
 
-    const keyDownHandler = (event) => {
-        if (event.code === 'Enter') {
-            onSubmitHandler()
-        }
-    }
+
 
 
 
@@ -254,9 +250,9 @@ const Todos = () => {
 
 
         return (
-            <div className="w-[60%] p-16 flex flex-col justify-center items-center ">
+            <div className="w-[60%] p-16 flex flex-col justify-center items-center max-lg:p-8 max-lg:w-[90%] ">
             <h2 className="text-center text-white font-semibold text-2xl font-poppins flex items-center gap-2 ">The Todo App <FaHeart color="#D70040"/></h2>
-            <AddTodo ref={editInputRef} isLoading={isLoading.btn} title={todo.title} description={todo.description} onChangeHandler={onChangeHandler} onSubmitHandler={onSubmitHandler} keyDownHandler={keyDownHandler}/>
+            <AddTodo ref={editInputRef} isLoading={isLoading.btn} title={todo.title} description={todo.description} onChangeHandler={onChangeHandler} onSubmitHandler={onSubmitHandler} />
 
             {isLoading.todos ? <HashLoader color="#36d7b7" className="mt-20"/> : 
             <div className="w-full mt-8 ">

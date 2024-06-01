@@ -179,12 +179,15 @@ const Todos = () => {
         const todo = todosList[index]
         todo.isComplete = !todo.isComplete;
 
-
         todosList[index] = todo;
-        
-        
         setTodos(todosList);
-        
+
+        try {
+            const {data} = await axios.post(`api/todo/update-status/${id}`, {isComplete: todo.isComplete})
+            console.log(data)
+        } catch (err) {
+            console.log(err)
+        }
 
     }
 

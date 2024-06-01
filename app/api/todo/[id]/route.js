@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server"
 import { testDbConnection } from "@/lib/db"
 import Todo from "@/models/todos"
-import { where } from "sequelize";
+
 
 // GET ALL TODOS
 export async function DELETE(request, {params}) {

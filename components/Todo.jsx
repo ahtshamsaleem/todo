@@ -23,7 +23,7 @@ const Todo = ({ todo, deleteTodo, editHandler, toggleComplete, onChangeHandler, 
 
         {todo.id === editingId ? <IoMdDoneAll className="text-green-500 hover:cursor-pointer hover:scale-110 active:scale-90" onClick={() => submitUpdateHandler(todo.id)}/> : <FaRegPenToSquare className= "hover:cursor-pointer hover:scale-110 active:scale-90" onClick={() => editHandler(todo.id)}/>}
         <FaRegTrashAlt className="hover:cursor-pointer hover:scale-110 active:scale-90" onClick={() => deleteTodo(todo.id)}/>
-        <IoMdCheckboxOutline className={`hover:cursor-pointer hover:scale-110 active:scale-90 ${todo.isComplete ? 'text-black' : 'text-green-500'}`} onClick={() => toggleComplete(todo.id)}/>
+        <IoMdCheckboxOutline className={`hover:cursor-pointer hover:scale-110 active:scale-90 ${todo.isComplete ? 'text-white' : 'text-green-500'}`} onClick={() => toggleComplete(todo.id)}/>
 
         </div>
     </div>

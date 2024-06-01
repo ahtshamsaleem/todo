@@ -1,7 +1,8 @@
 'use client'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Todo from "./Todo";
 import AddTodo from "./AddTodo";
+import axios from "axios";
 
 const todoList = [{
     title: 'Assignment 1',
@@ -18,13 +19,30 @@ const todoList = [{
 
 const Todos = () => {
 
-    const [todos, setTodos] = useState(todoList);
+    const [todos, setTodos] = useState([]);
 
     const [todo, setTodo] = useState({
         title: 'Assignment 2',
         description: 'I have to complete biology assignment before 9pm'
     });
     
+
+
+
+
+    useEffect(() => {
+        const getAllTodos = async () => {
+            const res = await axios.get('/api/todo');
+            console.log(res)
+        }
+
+        getAllTodos();
+    })
+
+
+    
+
+
 
 
     const onChangeHandler = (event) => {
@@ -37,11 +55,12 @@ const Todos = () => {
         }
     }
 
-    const onSubmitHandler = (event) => {
+    const onSubmitHandler = async (event) => {
         event.preventDefault();
         console.log(todo)
+        const res = await axios.post('/api/todo', {})
 
-
+        console.log(res)
     }
 
 

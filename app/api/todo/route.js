@@ -3,43 +3,57 @@ import { NextResponse } from "next/server"
 import { testDbConnection } from "@/lib/db"
 import Todo from "@/models/todos"
 
-
+// GET ALL TODOS
 export async function GET(request) {
-    console.log('resqqqq')
+    
 
     try {
-        await testDbConnection()
-    } catch (err) {
+        await testDbConnection();
+
+        const todos = await Todo.findAll();
+        
+        if(!todos) {
+            throw new Error('Could not fetch the todos list')
+        }
+
+        
+
         return NextResponse.json({
-            message: err.message
+            message: 'Date Received',
+            status: 200,
+            data: todos
+        })
+
+    } catch (error) {
+        return NextResponse.json({
+            message: error.message
         })
     }
 
-
-
-
-    return NextResponse.json({
-        message: 'eheheheheh'
-    })
 }
 
 
+
+// POST A NEW TODO
 export async function POST(request) {
-    console.log('POST')
+    const {title, description} = await request.json();
+    
 
     try {
         await testDbConnection();
 
 
         const todo = await Todo.create({
-            title: 'AHTSHAm',
-            description: ' this is my very first post',
+            title: title,
+            description: description,
             
         })
 
+
         
         return NextResponse.json({
-            message: 'New user created'
+            message: 'New user created',
+            status: 201
         })
 
         
@@ -50,9 +64,4 @@ export async function POST(request) {
     }
 
 
-
-
-    return NextResponse.json({
-        message: 'eheheheheh'
-    })
 }

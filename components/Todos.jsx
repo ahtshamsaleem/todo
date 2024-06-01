@@ -19,6 +19,9 @@ const todoList = [{
 
 const Todos = () => {
 
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('')
+        
     const [todos, setTodos] = useState([]);
 
     const [todo, setTodo] = useState({
@@ -32,12 +35,25 @@ const Todos = () => {
 
     useEffect(() => {
         const getAllTodos = async () => {
-            const res = await axios.get('/api/todo');
-            console.log(res)
+            setIsLoading(true);
+            setError('');
+            try {
+                const {data} = await axios.get('/api/todo');
+                if (data.status === 200) {
+                    setIsLoading(false);
+                    
+                    setTodos(data.data);
+                } else {
+                    
+                    setError(data.message)
+                }
+            } catch (err) {
+                setError(err.message)
+            }
         }
 
         getAllTodos();
-    })
+    }, [])
 
 
     
@@ -57,10 +73,21 @@ const Todos = () => {
 
     const onSubmitHandler = async (event) => {
         event.preventDefault();
-        console.log(todo)
-        const res = await axios.post('/api/todo', {})
+        
+        try {
+            const {data} = await axios.post('/api/todo', todo);
+            if (data.status === 201) {
+                setTodos((prev) => {
+                    const newTodos = [...prev];
+                    newTodos.unshift(todo)
+                    return newTodos;
+                })
+            }
+        } catch(err) {
+            setError(err.message)
+        }
 
-        console.log(res)
+        
     }
 
 
@@ -71,7 +98,7 @@ const Todos = () => {
             <AddTodo title={todo.title} description={todo.description} onChangeHandler={onChangeHandler} onSubmitHandler={onSubmitHandler}/>
                 <div className="w-full mt-8  ">
                 {
-                    todoList.map((el) => {
+                    todos.map((el) => {
                         return <Todo key={el.title} todo={el}/>
                     })
                 }

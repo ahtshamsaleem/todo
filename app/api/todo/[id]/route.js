@@ -48,19 +48,34 @@ export async function POST(request, {params}) {
     try {
         await testDbConnection();
 
-        const todo = await Todo.update({
-            title: title,
-            description, description
-        },{
-            where: {
-                id: params.id
-            }
-        })
-        console.log('after update todo', todo)
+
+
+        const todo = await Todo.findOne({ where: { id: params.id } });
 
         if(!todo) {
-            throw new Error('Could not delete the todo.')
+            throw new Error('Could not find the todo.')
         }
+
+        todo.title = title;
+        todo.description = description;
+
+        await todo.save();
+
+
+
+        // const todo = await Todo.update({
+        //     title: title,
+        //     description, description
+        // },{
+        //     where: {
+        //         id: params.id
+        //     }
+        // })
+        // console.log('after update todo', todo)
+
+        // if(!todo) {
+        //     throw new Error('Could not delete the todo.')
+        // }
 
         
 

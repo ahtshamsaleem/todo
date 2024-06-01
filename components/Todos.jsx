@@ -24,6 +24,11 @@ const Todos = () => {
         title: 'Assignment 2',
         description: 'I have to complete biology assignment before 9pm'
     });
+
+    const [editingTodo, setEditingTodo] = useState({
+        title: 'Assignment 2',
+        description: 'I have to complete biology assignment before 9pm'
+    });
     
 
 
@@ -63,6 +68,10 @@ const Todos = () => {
                 return setTodo((prev) => ({...prev, title: event.target.value}));
             case 'description':
                 return setTodo((prev) => ({...prev, description: event.target.value}));
+            case 'edit_title':
+                return setEditingTodo((prev) => ({...prev, title: event.target.value}));
+            case 'edit_description':
+                return setEditingTodo((prev) => ({...prev, description: event.target.value}));
             default : return;
         }
     }
@@ -116,10 +125,71 @@ const Todos = () => {
 
 
 
-    const updateHandler = async (id) =>  {
+    const editHandler = async (id) =>  {
+
+        const editingTodo = todos.filter((el) => el.id === id);
+
+        //console.log(editingTodo)
+        setEditingTodo((prev) => {
+            return {
+                ...prev,
+                title: editingTodo[0].title,
+                description: editingTodo[0].description
+
+            }
+        })
         setEditingId(id)
 
     }
+
+
+
+    
+    const submitUpdateHandler = async (id) =>  {
+
+        const oldTodo = todos.filter((el) => el.id === id)[0];
+        
+
+
+        if (oldTodo.title === editingTodo.title && oldTodo.description === editingTodo.description) {
+            return setEditingId('');
+        }
+
+        try {
+            const {data} = await axios.post(`api/todo/${id}`, editingTodo)
+
+                console.log(data)
+        } catch (err) {
+            console.log(err)
+        }
+
+
+
+
+        setEditingId('')
+
+    }
+    
+
+
+    const toggleComplete = async(id) => {
+        const todosList = [...todos];
+        const index = todosList.findIndex((el) => el.id === id);
+
+        const todo = todosList[index]
+        todo.isComplete = !todo.isComplete;
+
+
+        todosList[index] = todo;
+        
+        
+        setTodos(todosList);
+        
+
+    }
+
+
+
 
 
 
@@ -135,7 +205,7 @@ const Todos = () => {
             <div className="w-full mt-8  ">
                 {
                     todos.map((el) => {
-                        return <Todo key={el.id} todo={el} deleteTodo={deleteTodoHandler} isEditing={isEditing} updateTodo={updateHandler} editingId={editingId}/>
+                        return <Todo key={el.id} todo={el} deleteTodo={deleteTodoHandler} onChangeHandler={onChangeHandler} editHandler={editHandler} editingId={editingId} editingTodo={editingTodo} submitUpdateHandler={submitUpdateHandler} toggleComplete={toggleComplete}/>
                     })
                 }
                 </div>}

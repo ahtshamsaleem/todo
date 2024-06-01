@@ -55,7 +55,8 @@ export async function POST(request) {
         
         return NextResponse.json({
             message: 'New user created',
-            status: 201
+            status: 201,
+            todo:todo
         })
 
         

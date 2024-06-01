@@ -4,31 +4,42 @@ import Todo from "./Todo";
 import AddTodo from "./AddTodo";
 import axios from "axios";
 import { HashLoader } from "react-spinners";
+import { useRef } from "react";
+import { FaHeart } from "react-icons/fa";
 
 
 
 
 const Todos = () => {
 
+    const editInputRef = useRef(null);
+
 
 
     const [editingId, setEditingId] = useState();
-    const [isEditing, setIsEditing] = useState(true);
-    const [isFetching, setIsFetching] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('')
+    //const [isFetching, setIsFetching] = useState(false);
+
         
     const [todos, setTodos] = useState([]);
 
-    const [todo, setTodo] = useState({
-        title: 'Assignment 2',
-        description: 'I have to complete biology assignment before 9pm'
+    const [isLoading, setIsLoading] = useState({
+        todos: false,
+        btn: false,
+        todo: {
+            id: null,
+            loading: false
+        }
+    });
+    const [error, setError] = useState('')
+
+    const [todo, setTodo] = useState( {
+        id: '',
+        title: '',
+        isComplete: false,
+        description: ''
     });
 
-    const [editingTodo, setEditingTodo] = useState({
-        title: 'Assignment 2',
-        description: 'I have to complete biology assignment before 9pm'
-    });
+    const [editingTodo, setEditingTodo] = useState({});
     
 
 
@@ -36,24 +47,26 @@ const Todos = () => {
 
     useEffect(() => {
         const getAllTodos = async () => {
-            setIsFetching(true);
+            setIsLoading((prev) => ({...prev, todos: true}));
             setError('');
             try {
                 const {data} = await axios.get('/api/todo');
                 if (data.status === 200) {
                     
-                    setIsFetching(false);
+                    setIsLoading((prev) => ({...prev, todos: false}));
                     setTodos(data.data);
                 } else {
                     
                     setError(data.message)
                 }
             } catch (err) {
+                setIsLoading((prev) => ({...prev, todos: false}));
                 setError(err.message)
             }
         }
 
         getAllTodos();
+        editInputRef?.current?.focus();
     }, [])
 
 
@@ -76,20 +89,32 @@ const Todos = () => {
         }
     }
 
+
+
     const onSubmitHandler = async (event) => {
         event.preventDefault();
-        setIsLoading(true);
+        setIsLoading( prev => ({...prev, btn: true}));
         try {
             const {data} = await axios.post('/api/todo', todo);
+           
             if (data.status === 201) {
-                setIsLoading(false);
+                setIsLoading( prev => ({...prev, btn: false}));
+                setTodo( prev => ({...prev, title: '', description: ''}))
                 setTodos((prev) => {
+
+                    const newTodo = {
+                        id: data.todo.id,
+                        title: data.todo.title,
+                        isComplete: data.todo.isComplete,
+                        description: data.todo.description
+                    }
                     const newTodos = [...prev];
-                    newTodos.unshift(todo)
+                    newTodos.unshift(newTodo)
                     return newTodos;
                 })
             }
         } catch(err) {
+            setIsLoading( prev => ({...prev, btn: false}));
             setError(err.message)
         }
 
@@ -105,11 +130,13 @@ const Todos = () => {
 
 
     const deleteTodoHandler = async (id) => {
+
+        setIsLoading(prev => ({...prev, todo: {...prev.todo, id: id, loading: true}}))
         
         try {
             const {data} = await axios.delete(`api/todo/${id}`);
-
-            
+            console.log(data)
+            setIsLoading(prev => ({...prev, todo: {...prev.todo, id: null, loading: false}}))
             setTodos((prev) => {
                 
 
@@ -118,6 +145,7 @@ const Todos = () => {
             })
             
         } catch(error) {
+            setIsLoading(prev => ({...prev, todo: {...prev.todo, id: null, loading: false}}))
             console.log('error occured in dlete handelr')
         }
 
@@ -126,7 +154,7 @@ const Todos = () => {
 
 
     const editHandler = async (id) =>  {
-
+        //editInputRef?.current?.focus();
         const editingTodo = todos.filter((el) => el.id === id);
 
         //console.log(editingTodo)
@@ -138,7 +166,10 @@ const Todos = () => {
 
             }
         })
-        setEditingId(id)
+        setEditingId(id);
+
+        //console.log(editInputRef.current)
+        
 
     }
 
@@ -149,17 +180,27 @@ const Todos = () => {
 
         const oldTodo = todos.filter((el) => el.id === id)[0];
         
-
-
+        
+        
         if (oldTodo.title === editingTodo.title && oldTodo.description === editingTodo.description) {
             return setEditingId('');
         }
-
+        
+        setIsLoading(prev => ({...prev, todo: {...prev.todo, id: id, loading: true}}));
         try {
             const {data} = await axios.post(`api/todo/${id}`, editingTodo)
+            setIsLoading(prev => ({...prev, todo: {...prev.todo, id: null, loading: false}}));
+                
+            setTodos((prev) => {
+                const newArr = [...prev];
+                const index = newArr.findIndex((el) => el.id === id);
 
-                console.log(data)
+                newArr[index] = editingTodo;
+
+                return newArr;
+            })
         } catch (err) {
+            setIsLoading(prev => ({...prev, todo: {...prev.todo, id: null, loading: false}}));
             console.log(err)
         }
 
@@ -173,25 +214,38 @@ const Todos = () => {
 
 
     const toggleComplete = async(id) => {
+        setIsLoading(prev => ({...prev, todo: {...prev.todo, id: id, loading: true}}));
         const todosList = [...todos];
         const index = todosList.findIndex((el) => el.id === id);
-
+        
         const todo = todosList[index]
-        todo.isComplete = !todo.isComplete;
-
-        todosList[index] = todo;
-        setTodos(todosList);
-
+        //todo.isComplete = !todo.isComplete;
+        const newTodo = {
+            ...todo,
+        isComplete: !todo.isComplete
+        }
+        todosList[index] = newTodo;
+        
+        
         try {
-            const {data} = await axios.post(`api/todo/update-status/${id}`, {isComplete: todo.isComplete})
+            const {data} = await axios.post(`api/todo/update-status/${id}`, {isComplete: newTodo.isComplete})
             console.log(data)
+            setIsLoading(prev => ({...prev, todo: {...prev.todo, id: null, loading: false}}))
+            setTodos(todosList);
         } catch (err) {
+            setIsLoading(prev => ({...prev, todo: {...prev.todo, id: null, loading: false}}))
             console.log(err)
         }
 
     }
 
 
+
+    const keyDownHandler = (event) => {
+        if (event.code === 'Enter') {
+            onSubmitHandler()
+        }
+    }
 
 
 
@@ -201,14 +255,14 @@ const Todos = () => {
 
         return (
             <div className="w-[60%] p-16 flex flex-col justify-center items-center ">
-            <h2 className="text-center">The Todo App</h2>
-            <AddTodo isLoading={isLoading} title={todo.title} description={todo.description} onChangeHandler={onChangeHandler} onSubmitHandler={onSubmitHandler}/>
+            <h2 className="text-center text-white font-semibold text-2xl font-poppins flex items-center gap-2 ">The Todo App <FaHeart color="#D70040"/></h2>
+            <AddTodo ref={editInputRef} isLoading={isLoading.btn} title={todo.title} description={todo.description} onChangeHandler={onChangeHandler} onSubmitHandler={onSubmitHandler} keyDownHandler={keyDownHandler}/>
 
-            {isFetching ? <HashLoader color="#36d7b7" className="mt-12"/> : 
-            <div className="w-full mt-8  ">
+            {isLoading.todos ? <HashLoader color="#36d7b7" className="mt-20"/> : 
+            <div className="w-full mt-8 ">
                 {
                     todos.map((el) => {
-                        return <Todo key={el.id} todo={el} deleteTodo={deleteTodoHandler} onChangeHandler={onChangeHandler} editHandler={editHandler} editingId={editingId} editingTodo={editingTodo} submitUpdateHandler={submitUpdateHandler} toggleComplete={toggleComplete}/>
+                        return <Todo ref={editInputRef}  key={el.id} todo={el} deleteTodo={deleteTodoHandler} onChangeHandler={onChangeHandler} editHandler={editHandler} editingId={editingId} editingTodo={editingTodo} submitUpdateHandler={submitUpdateHandler} toggleComplete={toggleComplete} isLoading={isLoading.todo}/>
                     })
                 }
                 </div>}

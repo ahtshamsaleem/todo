@@ -12,7 +12,8 @@ const Todos = () => {
 
 
 
-
+    const [editingId, setEditingId] = useState();
+    const [isEditing, setIsEditing] = useState(true);
     const [isFetching, setIsFetching] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('')
@@ -95,14 +96,34 @@ const Todos = () => {
 
 
     const deleteTodoHandler = async (id) => {
+        
         try {
-            const {data} = await axios.delete(`api/todo${id}`);
-            console.log(data)
+            const {data} = await axios.delete(`api/todo/${id}`);
+
+            
+            setTodos((prev) => {
+                
+
+                return prev.filter((el) => el.id !== id);
+
+            })
+            
         } catch(error) {
             console.log('error occured in dlete handelr')
         }
 
     }
+
+
+
+    const updateHandler = async (id) =>  {
+        setEditingId(id)
+
+    }
+
+
+
+
 
 
         return (
@@ -114,7 +135,7 @@ const Todos = () => {
             <div className="w-full mt-8  ">
                 {
                     todos.map((el) => {
-                        return <Todo key={el.id} todo={el} deleteTodo={deleteTodoHandler}/>
+                        return <Todo key={el.id} todo={el} deleteTodo={deleteTodoHandler} isEditing={isEditing} updateTodo={updateHandler} editingId={editingId}/>
                     })
                 }
                 </div>}

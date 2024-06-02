@@ -1,10 +1,11 @@
 'use client'
 import { useEffect, useState } from "react";
 import Todo from "./Todo";
-import AddTodo from "./AddTodo";
+import AddTodoForm from "./AddTodoForm";
 import axios from "axios";
 import { HashLoader } from "react-spinners";
 import { useRef } from "react";
+import { validateTitle, validateDescription } from "@/lib/validateInput";
 import { FaHeart } from "react-icons/fa";
 
 
@@ -13,8 +14,6 @@ import { FaHeart } from "react-icons/fa";
 const Todos = () => {
 
     const editInputRef = useRef(null);
-
-
 
     const [editingId, setEditingId] = useState();
     //const [isFetching, setIsFetching] = useState(false);
@@ -30,7 +29,15 @@ const Todos = () => {
             loading: false
         }
     });
-    const [error, setError] = useState('')
+    const [error, setError] = useState({
+        title: '',
+        description: '',
+        todos: '',
+        todo: {
+            message: '',
+            id: null 
+        }
+    })
 
     const [todo, setTodo] = useState( {
         id: '',
@@ -48,20 +55,17 @@ const Todos = () => {
     useEffect(() => {
         const getAllTodos = async () => {
             setIsLoading((prev) => ({...prev, todos: true}));
-            setError('');
+            setError(prev => ({...prev,  title: '', description: '', todos: ''}));
             try {
                 const {data} = await axios.get('/api/todo');
                 if (data.status === 200) {
                     
                     setIsLoading((prev) => ({...prev, todos: false}));
                     setTodos(data.data);
-                } else {
-                    
-                    setError(data.message)
                 }
             } catch (err) {
                 setIsLoading((prev) => ({...prev, todos: false}));
-                setError(err.message)
+                setError(prev => ({...prev, todos: err.message}))
             }
         }
 
@@ -93,6 +97,16 @@ const Todos = () => {
 
     const onSubmitHandler = async (event) => {
         event.preventDefault();
+
+        setError(prev => ({...prev,  title: '', description: '', todos: ''}));
+        if(!validateTitle(todo.title)) {
+            return setError(prev => ({...prev, title: 'Title must not be empty!'}))
+        }
+        if(!validateTitle(todo.description)) {
+            return setError(prev => ({...prev, description: 'Description must not be empty!'}))
+        }
+
+
         setIsLoading( prev => ({...prev, btn: true}));
         try {
             const {data} = await axios.post('/api/todo', todo);
@@ -115,7 +129,7 @@ const Todos = () => {
             }
         } catch(err) {
             setIsLoading( prev => ({...prev, btn: false}));
-            setError(err.message)
+            setError(prev => ({...prev, todos: err.message}));
         }
 
         
@@ -131,11 +145,15 @@ const Todos = () => {
 
     const deleteTodoHandler = async (id) => {
 
+        setError(prev => ({ title: '', description: '', todos: '', todo: {id: null, message: ''}}));
         setIsLoading(prev => ({...prev, todo: {...prev.todo, id: id, loading: true}}))
         
         try {
+
+            
             const {data} = await axios.delete(`api/todo/${id}`);
-            console.log(data)
+            
+
             setIsLoading(prev => ({...prev, todo: {...prev.todo, id: null, loading: false}}))
             setTodos((prev) => {
                 
@@ -146,7 +164,7 @@ const Todos = () => {
             
         } catch(error) {
             setIsLoading(prev => ({...prev, todo: {...prev.todo, id: null, loading: false}}))
-            console.log('error occured in dlete handelr')
+            setError(prev => ({...prev, todo: {id: id, message: 'Error occured while deleting the todo.' }}))
         }
 
     }
@@ -178,6 +196,8 @@ const Todos = () => {
     
     const submitUpdateHandler = async (id) =>  {
 
+        setError(prev => ({ title: '', description: '', todos: '', todo: {id: null, message: ''}}));
+
         const oldTodo = todos.filter((el) => el.id === id)[0];
         
         
@@ -201,7 +221,7 @@ const Todos = () => {
             })
         } catch (err) {
             setIsLoading(prev => ({...prev, todo: {...prev.todo, id: null, loading: false}}));
-            console.log(err)
+            setError(prev => ({...prev, todo: {id: id, message: 'Error occured while updating the todo.' }}))
         }
 
 
@@ -229,12 +249,11 @@ const Todos = () => {
         
         try {
             const {data} = await axios.post(`api/todo/update-status/${id}`, {isComplete: newTodo.isComplete})
-            console.log(data)
+            
             setIsLoading(prev => ({...prev, todo: {...prev.todo, id: null, loading: false}}))
             setTodos(todosList);
         } catch (err) {
             setIsLoading(prev => ({...prev, todo: {...prev.todo, id: null, loading: false}}))
-            console.log(err)
         }
 
     }
@@ -252,13 +271,14 @@ const Todos = () => {
         return (
             <div className="w-[60%] p-16 flex flex-col justify-center items-center max-lg:p-8 max-lg:w-[90%] ">
             <h2 className="text-center text-white font-semibold text-2xl font-poppins flex items-center gap-2 ">The Todo App <FaHeart color="#D70040"/></h2>
-            <AddTodo ref={editInputRef} isLoading={isLoading.btn} title={todo.title} description={todo.description} onChangeHandler={onChangeHandler} onSubmitHandler={onSubmitHandler} />
+            <AddTodoForm ref={editInputRef} error={error} isLoading={isLoading.btn} title={todo.title} description={todo.description} onChangeHandler={onChangeHandler} onSubmitHandler={onSubmitHandler} />
 
-            {isLoading.todos ? <HashLoader color="#36d7b7" className="mt-20"/> : 
+            {error.todos && <p className='text-red-600  text-xl text-center '>{error.todos}</p>}
+            {isLoading.todos ? <HashLoader color="#36d7b7" className="mt-20"/> : todos.length === 0 ? <p className="p-16 text-white  ">You've no todo items! Click on Add to items to create todos! Tadaaa</p> :
             <div className="w-full mt-8 ">
                 {
                     todos.map((el) => {
-                        return <Todo ref={editInputRef}  key={el.id} todo={el} deleteTodo={deleteTodoHandler} onChangeHandler={onChangeHandler} editHandler={editHandler} editingId={editingId} editingTodo={editingTodo} submitUpdateHandler={submitUpdateHandler} toggleComplete={toggleComplete} isLoading={isLoading.todo}/>
+                        return <Todo ref={editInputRef}  key={el.id} error={error} todo={el} deleteTodo={deleteTodoHandler} onChangeHandler={onChangeHandler} editHandler={editHandler} editingId={editingId} editingTodo={editingTodo} submitUpdateHandler={submitUpdateHandler} toggleComplete={toggleComplete} isLoading={isLoading.todo}/>
                     })
                 }
                 </div>}

@@ -1,4 +1,4 @@
-import Todos from "@/components/Todos";
+import Todos from "@/components/Todo/Todos";
 
 export default function Home() {
   return (

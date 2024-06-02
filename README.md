@@ -1,4 +1,13 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+First clone the this app to your directory.
+Create a .env.local file.
+Add Environment Variables
+DB_URI=Your Database URI
+JWT_SECRET=Your JWT Secret Key
+
+Then Run 
+npm install
+to install all the dependencies.
+
 
 ## Getting Started
 
@@ -16,21 +25,31 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+##USER CREADENTIALS
 
-## Learn More
+You can create a new user by signing up.
 
-To learn more about Next.js, take a look at the following resources:
+OR
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+You can use these credentials:
+Email : root@gmail.com
+Password : Qwerty123@
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## APP INFORMATION
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This app uses jsonwebtoken for authentication, & uses cookies to store the token.
+Using this app you'can create, update and delete a todo.
+Postgresql is being used as a database.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## STACK USED
+
+NextJS
+TailwindCSS
+React-Icons
+React-Spinners
+PostgreSQL
+Sequqlize ORM
+

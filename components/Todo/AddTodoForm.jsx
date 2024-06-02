@@ -1,8 +1,10 @@
+'use client'
+
 import { PropagateLoader } from "react-spinners"
 import { forwardRef } from "react"
 
 
-const AddTodo = forwardRef(({isLoading, title, description, onChangeHandler, onSubmitHandler, error}, ref) => {
+const AddTodoForm = forwardRef(({isLoading, title, description, onChangeHandler, onSubmitHandler, error}, ref) => {
 
 
     return (
@@ -26,4 +28,4 @@ const AddTodo = forwardRef(({isLoading, title, description, onChangeHandler, onS
     )
   })
 
-export default AddTodo
+export default AddTodoForm

@@ -18,8 +18,8 @@ const User = sq.define('user', {
     },
 });
 
-User.sync().then((res) => {
-    console.log('User table sync.');
-});
+// User.sync().then((res) => {
+//     console.log('User table sync.');
+// });
 
 module.exports = User;

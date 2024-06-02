@@ -159,8 +159,8 @@ const Signup = (props) => {
           </div>
 
           <Link className='text-white' href={'/login'}>Go to Login Page</Link>
-          {!formState.success && <p   className='text-red-500 px-2 mb-[-8px] '>{formState.message}</p>}
-          {formState.success && <p className='text-white px-2 mb-[-8px] '>{formState.message} </p>}
+          {!formState.success && <p   className='text-red-500  mb-[-8px] '>{formState.message}</p>}
+          {formState.success && <p className='text-white mb-[-8px] '>{formState.message} </p>}
 
 
           

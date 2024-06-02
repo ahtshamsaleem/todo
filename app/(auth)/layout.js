@@ -1,6 +1,6 @@
 // import { Inter } from "next/font/google"; className={inter.className}
 import { FaHeart } from "react-icons/fa6";
-import "./globals.css";
+import "../globals.css";
 
 // const inter = Inter({ subsets: ["latin"] });
 

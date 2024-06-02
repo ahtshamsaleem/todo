@@ -2,6 +2,8 @@
 import { validateEmail, validateName, validatePass } from '@/lib/validateInput';
 import axios from 'axios';
 import Link from 'next/link'
+
+import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react';
 import { FaLink } from "react-icons/fa";
 import { IoMdEye, IoMdEyeOff } from 'react-icons/io';
@@ -12,6 +14,7 @@ import { PropagateLoader } from 'react-spinners';
 const Login = (props) => {
 
 
+    const router = useRouter()
 
     const [formState, setFormState] = useState({
         success: false,
@@ -107,7 +110,10 @@ const Login = (props) => {
                     email: email.value,
                     password: password.value
                 })
-                setFormState(prev => ({...prev, message: data.message, success:data.success, loading:false}))
+                setFormState(prev => ({...prev, message: data.message, success:data.success, loading:false}));
+                if (data.success) {
+                    router.push('/')
+                }
                 
             } catch(err) {
                 setFormState(prev => ({...prev, message: err.message, loading:false}))
@@ -139,8 +145,8 @@ const Login = (props) => {
           </div>
 
           <Link className='text-white' href={'/signup'}>Go to Signup Page</Link>
-          {!formState.success && <p   className='text-red-500 px-2 mb-[-8px] '>{formState.message}</p>}
-          {formState.success && <p className='text-white px-2 mb-[-8px] '>{formState.message} </p>}
+          {!formState.success && <p   className='text-red-400  mb-[-8px] '>{formState.message}</p>}
+          {formState.success && <p className='text-white  mb-[-8px] '>{formState.message} </p>}
 
 
           

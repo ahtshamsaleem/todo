@@ -24,7 +24,7 @@ export async function POST(request) {
         }
 
         const token = jwt.sign({
-            userId: user.email
+            email: user.email
         }, 'secret', {expiresIn: '1h'});
 
         console.log(token, 'my token is his');

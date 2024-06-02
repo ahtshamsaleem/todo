@@ -5,9 +5,6 @@ import { forwardRef } from "react"
 const AddTodo = forwardRef(({isLoading, title, description, onChangeHandler, onSubmitHandler, error}, ref) => {
 
 
-
-
-
     return (
       <div className="w-full ">
           <form onSubmit={onSubmitHandler}>

@@ -9,15 +9,11 @@ import { validateTitle, validateDescription } from "@/lib/validateInput";
 import { FaHeart } from "react-icons/fa";
 
 
-
-
 const Todos = () => {
 
     const editInputRef = useRef(null);
 
     const [editingId, setEditingId] = useState();
-    //const [isFetching, setIsFetching] = useState(false);
-
         
     const [todos, setTodos] = useState([]);
 
@@ -47,10 +43,6 @@ const Todos = () => {
     });
 
     const [editingTodo, setEditingTodo] = useState({});
-    
-
-
-
 
     useEffect(() => {
         const getAllTodos = async () => {
@@ -78,7 +70,7 @@ const Todos = () => {
 
 
 
-
+// ONCHANGE HANDLER --------------->
     const onChangeHandler = (event) => {
         switch (event.target.name) {
             case 'title':
@@ -94,7 +86,7 @@ const Todos = () => {
     }
 
 
-
+// ONSUBMIT HANDLER --------------->
     const onSubmitHandler = async (event) => {
         event.preventDefault();
 
@@ -102,7 +94,7 @@ const Todos = () => {
         if(!validateTitle(todo.title)) {
             return setError(prev => ({...prev, title: 'Title must not be empty!'}))
         }
-        if(!validateTitle(todo.description)) {
+        if(!validateDescription(todo.description)) {
             return setError(prev => ({...prev, description: 'Description must not be empty!'}))
         }
 
@@ -135,13 +127,7 @@ const Todos = () => {
         
     }
 
-
-
-
-
-
-
-
+// DELETE TODO HANDLER --------------->
 
     const deleteTodoHandler = async (id) => {
 
@@ -149,17 +135,11 @@ const Todos = () => {
         setIsLoading(prev => ({...prev, todo: {...prev.todo, id: id, loading: true}}))
         
         try {
-
-            
             const {data} = await axios.delete(`api/todo/${id}`);
-            
-
+        
             setIsLoading(prev => ({...prev, todo: {...prev.todo, id: null, loading: false}}))
             setTodos((prev) => {
-                
-
                 return prev.filter((el) => el.id !== id);
-
             })
             
         } catch(error) {
@@ -170,12 +150,10 @@ const Todos = () => {
     }
 
 
-
+// EDIT TODO HANDLER --------------->
     const editHandler = async (id) =>  {
-        //editInputRef?.current?.focus();
-        const editingTodo = todos.filter((el) => el.id === id);
 
-        //console.log(editingTodo)
+        const editingTodo = todos.filter((el) => el.id === id);        
         setEditingTodo((prev) => {
             return {
                 ...prev,
@@ -185,22 +163,15 @@ const Todos = () => {
             }
         })
         setEditingId(id);
-
-        //console.log(editInputRef.current)
-        
-
     }
 
 
-
-    
+// SUBMIT UPDATED HANDLER --------------->    
     const submitUpdateHandler = async (id) =>  {
 
         setError(prev => ({ title: '', description: '', todos: '', todo: {id: null, message: ''}}));
 
         const oldTodo = todos.filter((el) => el.id === id)[0];
-        
-        
         
         if (oldTodo.title === editingTodo.title && oldTodo.description === editingTodo.description) {
             return setEditingId('');
@@ -224,22 +195,19 @@ const Todos = () => {
             setError(prev => ({...prev, todo: {id: id, message: 'Error occured while updating the todo.' }}))
         }
 
-
-
-
         setEditingId('')
 
     }
     
 
-
+// TODO COMPLETE HANDLER --------------->
     const toggleComplete = async(id) => {
         setIsLoading(prev => ({...prev, todo: {...prev.todo, id: id, loading: true}}));
         const todosList = [...todos];
         const index = todosList.findIndex((el) => el.id === id);
         
         const todo = todosList[index]
-        //todo.isComplete = !todo.isComplete;
+
         const newTodo = {
             ...todo,
         isComplete: !todo.isComplete
@@ -258,16 +226,6 @@ const Todos = () => {
 
     }
 
-
-
-
-
-
-
-
-
-
-
         return (
             <div className="w-[60%] p-16 flex flex-col justify-center items-center max-lg:p-8 max-lg:w-[90%] ">
             <h2 className="text-center text-white font-semibold text-2xl font-poppins flex items-center gap-2 ">The Todo App <FaHeart color="#D70040"/></h2>
@@ -275,7 +233,7 @@ const Todos = () => {
 
             {error.todos && <p className='text-red-600  text-xl text-center '>{error.todos}</p>}
             {isLoading.todos ? <HashLoader color="#36d7b7" className="mt-20"/> : todos.length === 0 ? <p className="p-16 text-white  ">You've no todo items! Click on Add to items to create todos! Tadaaa</p> :
-            <div className="w-full mt-8 ">
+                <div className="w-full mt-8 ">
                 {
                     todos.map((el) => {
                         return <Todo ref={editInputRef}  key={el.id} error={error} todo={el} deleteTodo={deleteTodoHandler} onChangeHandler={onChangeHandler} editHandler={editHandler} editingId={editingId} editingTodo={editingTodo} submitUpdateHandler={submitUpdateHandler} toggleComplete={toggleComplete} isLoading={isLoading.todo}/>
@@ -283,16 +241,10 @@ const Todos = () => {
                 }
                 </div>}
             
-            
-            
             </div>
         )
 
-
-
-
 }
-
 
 
 export default Todos;

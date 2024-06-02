@@ -1,8 +1,5 @@
-// import { Inter } from "next/font/google"; className={inter.className}
 import { FaHeart } from "react-icons/fa6";
 import "../globals.css";
-
-// const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "The Todo App",

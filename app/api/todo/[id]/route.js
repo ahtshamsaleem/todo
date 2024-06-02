@@ -1,13 +1,11 @@
-
 import { NextResponse } from "next/server"
 import { testDbConnection } from "@/lib/db"
 import Todo from "@/models/todos"
 
 
-// GET ALL TODOS
+// DELETE A TODO
 export async function DELETE(request, {params}) {
-    console.log(params)
-
+    
     try {
         await testDbConnection();
 
@@ -16,17 +14,14 @@ export async function DELETE(request, {params}) {
                 id: params.id
             }
         })
-        console.log('after deleting todo', todo)
+        
         if(!todo) {
             throw new Error('Could not delete the todo.')
         }
 
-        
-
         return NextResponse.json({
             message: 'Todo Deleted',
-            status: 200,
-            
+            status: 200, 
         })
 
     } catch (error) {
@@ -42,16 +37,12 @@ export async function DELETE(request, {params}) {
 
 
 // UPDATE TODO
-
 export async function POST(request, {params}) {
     const {title, description} = await request.json();
     try {
         await testDbConnection();
 
-
-
         const todo = await Todo.findOne({ where: { id: params.id } });
-
         if(!todo) {
             throw new Error('Could not find the todo.')
         }
@@ -60,24 +51,6 @@ export async function POST(request, {params}) {
         todo.description = description;
 
         await todo.save();
-
-
-
-        // const todo = await Todo.update({
-        //     title: title,
-        //     description, description
-        // },{
-        //     where: {
-        //         id: params.id
-        //     }
-        // })
-        // console.log('after update todo', todo)
-
-        // if(!todo) {
-        //     throw new Error('Could not delete the todo.')
-        // }
-
-        
 
         return NextResponse.json({
             message: 'Todo Updated ehe',

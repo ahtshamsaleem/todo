@@ -6,19 +6,15 @@ import Todo from "@/models/todos"
 // GET ALL TODOS
 export async function GET(request) {
     
-
     try {
         await testDbConnection();
 
         const todos = await Todo.findAll({
             order: sq.col('id')
         });
-        
         if(!todos) {
             throw new Error('Could not fetch the todos list')
         }
-
-        
 
         return NextResponse.json({
             message: 'Date Received',
@@ -39,7 +35,6 @@ export async function GET(request) {
 // POST A NEW TODO
 export async function POST(request) {
     const {title, description} = await request.json();
-    
 
     try {
         await testDbConnection();
@@ -51,8 +46,6 @@ export async function POST(request) {
             
         })
 
-
-        
         return NextResponse.json({
             message: 'New user created',
             status: 201,
